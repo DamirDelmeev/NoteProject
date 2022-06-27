@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 
@@ -33,4 +34,10 @@ public class SpringConfig {
         ClientHttpRequestFactory client = new HttpComponentsClientHttpRequestFactory(httpClient);
         return new RestTemplate(client);
     }
+
+    @Bean
+    public BCryptPasswordEncoder getBCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 }

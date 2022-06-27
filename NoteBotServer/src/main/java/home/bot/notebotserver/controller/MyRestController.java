@@ -45,9 +45,9 @@ public class MyRestController {
         return user;
     }
 
-    @GetMapping("password/{text}")
-    public User getUserByPass(@PathVariable String text) {
-        User user = service.getUserByPass(text);
-        return user;
-    }
+//    @GetMapping("password/{text}")
+//    public User getUserByPass(@PathVariable String text) {
+//        User user = service.getUserByPass(text);
+//        return user;
+//    }
 }

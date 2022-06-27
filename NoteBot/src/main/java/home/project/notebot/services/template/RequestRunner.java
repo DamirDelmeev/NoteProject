@@ -4,6 +4,7 @@ import home.project.notebot.entity.Cell;
 import home.project.notebot.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +13,10 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @RequiredArgsConstructor
 public class RequestRunner {
+    @Autowired
     private final RestTemplate restTemplate;
+
+
     @Value("${telegram.host-url}")
     private String url;
 
@@ -38,17 +42,14 @@ public class RequestRunner {
         restTemplate.postForObject(url + "cell", cell, String.class);
     }
 
-    public boolean runnerCheckLogin(String userText) {
+    public User runnerCheckLogin(String userText) {
         User userForCheck = restTemplate.getForObject(url + "login/{text}", User.class, userText);
-        if (userForCheck != null && userForCheck.getLogin().equals(userText)) {
-            return true;
-        } else return false;
+        return userForCheck;
+
     }
 
-    public boolean runnercheckPassword(String userText, User user) {
-        User userForCheck = restTemplate.getForObject(url + "password/{text}", User.class, userText);
-        if (userForCheck != null && userForCheck.getPassword().equals(userText) && userForCheck.getLogin().equals(user.getUserInLogin())) {
-            return true;
-        } else return false;
+    public User runnercheckPassword(String userText, User user) {
+        User userForCheck = restTemplate.getForObject(url + "login/{text}", User.class, userText);
+        return userForCheck;
     }
 }
