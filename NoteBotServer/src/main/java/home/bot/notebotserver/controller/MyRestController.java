@@ -35,7 +35,7 @@ public class MyRestController {
 
     @PostMapping("user")
     @ResponseStatus(HttpStatus.OK)
-    public void showEmployee(@RequestBody User user) {//@PathVariable получение id из адреса запроса
+    public void addUser(@RequestBody User user) {
         service.addUser(user);
     }
 
@@ -45,9 +45,8 @@ public class MyRestController {
         return user;
     }
 
-//    @GetMapping("password/{text}")
-//    public User getUserByPass(@PathVariable String text) {
-//        User user = service.getUserByPass(text);
-//        return user;
-//    }
+    @GetMapping("cell/content/{id}")
+    public Cell getCellForContent(@PathVariable long id) {
+        return service.getCellForContent(id);
+    }
 }

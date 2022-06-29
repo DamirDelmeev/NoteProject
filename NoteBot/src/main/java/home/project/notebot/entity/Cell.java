@@ -1,18 +1,17 @@
 package home.project.notebot.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cell {
-    private int id;
+    private long id;
     private String title;
     private String text;
     private byte[] view;
     private String status;
+    private User user;
 }

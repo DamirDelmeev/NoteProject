@@ -15,6 +15,8 @@ public interface Service {
 
     public void addCell(Cell cell);
 
+    public Cell getCellForContent(Long userId);
+
     User getUser(String text);
 
     User getUserByPass(String text);

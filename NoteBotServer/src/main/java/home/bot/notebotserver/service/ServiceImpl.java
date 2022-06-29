@@ -7,6 +7,7 @@ import home.bot.notebotserver.entity.Cell;
 import home.bot.notebotserver.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Service
@@ -39,6 +40,12 @@ public class ServiceImpl implements Service {
     @Override
     public void addCell(Cell cell) {
         cellRepository.save(cell);
+    }
+
+    @Override
+    public Cell getCellForContent(Long userId) {
+        List<Cell> cellList = getUser(userId).getCellList();
+        return cellList.get(cellList.size() - 1);
     }
 
     @Override

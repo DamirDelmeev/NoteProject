@@ -52,4 +52,10 @@ public class RequestRunner {
         User userForCheck = restTemplate.getForObject(url + "login/{text}", User.class, userText);
         return userForCheck;
     }
+
+    public Cell runnerGetCellForContent(long userId) {
+        log.info("log message: {}", "Пользователь нажал add content");
+        return restTemplate
+                .getForObject(url + "cell/content/{id}", Cell.class, userId);
+    }
 }

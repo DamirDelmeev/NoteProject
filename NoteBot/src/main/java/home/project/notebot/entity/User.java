@@ -1,13 +1,12 @@
 package home.project.notebot.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +16,7 @@ public class User {
     String password;
     String state;
     String userInLogin;
+    List<Cell> cellList;
 
     @Override
     public boolean equals(Object o) {

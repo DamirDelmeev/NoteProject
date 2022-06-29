@@ -1,12 +1,18 @@
 package home.bot.notebotserver.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "cell")
 @AllArgsConstructor
@@ -24,4 +30,10 @@ public class Cell {
     private byte[] view;
     @Column(name = "status")
     private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @NotFound(action = NotFoundAction.EXCEPTION)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

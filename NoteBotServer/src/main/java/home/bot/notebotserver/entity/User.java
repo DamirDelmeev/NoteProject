@@ -1,29 +1,42 @@
 package home.bot.notebotserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
     @Id
+
     @Column(name = "id")
-    Long id;
+    private long id;
     @Column(name = "login")
-    String login;
+    private String login;
     @Column(name = "pass")
-    String password;
+    private String password;
     @Column(name = "state")
-    String state;
+    private String state;
     @Column(name = "userinlogin")
-    String userInLogin;
+    private String userInLogin;
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @NotFound(action = NotFoundAction.IGNORE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private List<Cell> cellList;
 }

@@ -2,7 +2,6 @@ package home.project.notebot.services;
 
 import home.project.notebot.entity.Cell;
 import home.project.notebot.entity.User;
-import home.project.notebot.keyboard.ReplyKeyboardMaker;
 import home.project.notebot.services.template.RequestRunner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,5 +51,9 @@ public class Service {
             return false;
         }
 
+    }
+
+    public Cell getCellForContent(Long userId) {
+        return requestRunner.runnerGetCellForContent(userId);
     }
 }

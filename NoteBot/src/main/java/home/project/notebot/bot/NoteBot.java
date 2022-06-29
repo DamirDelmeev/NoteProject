@@ -3,7 +3,9 @@ package home.project.notebot.bot;
 import home.project.notebot.configuration.TelegramConfig;
 import home.project.notebot.constants.ButtonName;
 import home.project.notebot.constants.State;
+import home.project.notebot.entity.Cell;
 import home.project.notebot.entity.User;
+import home.project.notebot.handlers.NotesMessageHandler;
 import home.project.notebot.handlers.RegistrationMessageHandler;
 import home.project.notebot.keyboard.ReplyKeyboardMaker;
 import home.project.notebot.services.Service;
@@ -14,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
@@ -37,6 +40,9 @@ public class NoteBot extends SpringWebhookBot {
     @Autowired
     RegistrationMessageHandler registrationMessageHandler;
 
+    @Autowired
+    NotesMessageHandler notesMessageHandler;
+
     public NoteBot(SetWebhook setWebhook, TelegramConfig telegramConfig) {
         super(setWebhook);
         this.botPath = telegramConfig.getWebHookPath();
@@ -55,9 +61,9 @@ public class NoteBot extends SpringWebhookBot {
                     "Вы хотите войти в аккаунт или зарегистрироваться?",
                     Arrays.asList(ButtonName.LOG_IN.getNameButton(), ButtonName.REGISTRATION.getNameButton()));
         }
-        if (userText.equals("Войти")) {
+        if (userText != null && userText.equals("Войти")) {
             if (user == null) {
-                user = new User(userId, null, null, null, null);
+                user = new User(userId, null, null, null, null, null);
             }
             return registrationMessageHandler
                     .getLoginAndRegistrationMessage(user, State.TRY_IN_LOGIN, userId, null,
@@ -95,9 +101,9 @@ public class NoteBot extends SpringWebhookBot {
             }
         }
 
-        if (userText.equals("Регистрация")) {
+        if (userText != null && userText.equals("Регистрация")) {
             if (user == null) {
-                user = new User(userId, null, null, null, null);
+                user = new User(userId, null, null, null, null, null);
             }
             return registrationMessageHandler.getRegistrationMessage(userId, null, user);
         }
@@ -120,6 +126,49 @@ public class NoteBot extends SpringWebhookBot {
                     "Вы успешно прошли регистрацию.Нажмите кнопку войти.",
                     Collections.singletonList(ButtonName.LOG_IN.getNameButton()));
         }
+        if (user.getState().equals(State.ONLINE.getNameState())) {
+            if (userText.equals(ButtonName.ADD_NOTE.getNameButton())) {
+                user.setState(State.ADD_TITLE.getNameState());
+                service.putUser(user);
+                return new SendMessage(userId.toString(), "Введите тему вашей заметки.");
+            } else {
+                return registrationMessageHandler
+                        .getrResultRegistrationAndLogIn(user, State.ONLINE, null, userId,
+                                "Вы успешно вошли в аккаунт.",
+                                Arrays.asList
+                                        (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton()));
+            }
+        }
+        if (user.getState().equals(State.ADD_TITLE.getNameState())) {
+
+            Cell cell = Cell.builder()
+                    .title(userText)
+                    .user(new User().builder()
+                            .id(userId)
+                            .build())
+                    .build();
+            service.putCell(cell);
+            user.setState(State.ADD_CONTENT.getNameState());
+            service.putUser(user);
+            return new SendMessage(userId.toString(), "Введите текст или приложите картинку для вашей заметки.");
+
+        }
+        if (user.getState().equals(State.ADD_CONTENT.getNameState())) {
+            if (userText != null) {
+                Cell cell = service.getCellForContent(userId);
+                cell.setText(userText);
+                service.putCell(cell);
+                return registrationMessageHandler
+                        .getrResultRegistrationAndLogIn(user, State.ONLINE, null, userId,
+                                "Вы успешно внесли заметку.",
+                                Arrays.asList
+                                        (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton()));
+            } else {
+        //realize SendPhoto
+
+            }
+        }
+
         return null;
     }
 }
