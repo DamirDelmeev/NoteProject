@@ -15,14 +15,27 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.ResourceUtils;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -52,10 +65,19 @@ public class NoteBot extends SpringWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+        SendMessage sendMessage=null;
+        try{
+      sendMessage = getSendMessage(update);}catch (Exception e){
+            return new SendMessage(update.getMessage().getChatId().toString(), "Ошибка");
+        }
+        return sendMessage;
+    }
+
+    private SendMessage getSendMessage(Update update) {
         Long userId = update.getMessage().getChatId();
         User user = service.getUser(userId);
         String userText = update.getMessage().getText();
-        if ((user == null) & (!userText.equals("Войти")) & (!userText.equals("Регистрация"))
+        if ((user == null) && userText != null && (!userText.equals("Войти")) & (!userText.equals("Регистрация"))
                 || (user != null) && user.getState().equals(State.NOT_REGISTERED.getNameState())) {
             return registrationMessageHandler.getInfoMessage(null, userId,
                     "Вы хотите войти в аккаунт или зарегистрироваться?",
@@ -163,12 +185,52 @@ public class NoteBot extends SpringWebhookBot {
                                 "Вы успешно внесли заметку.",
                                 Arrays.asList
                                         (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton()));
-            } else {
-        //realize SendPhoto
-
+            }
+            if (update.getMessage().getPhoto()!= null) {
+                byte[] imageInByte;
+                List<PhotoSize> photos = update.getMessage().getPhoto();
+                PhotoSize photo = photos.get(photos.size() - 1);
+                String fileId = photo.getFileId();
+                GetFile getFile = new GetFile();
+                getFile.setFileId(fileId);
+                String filePath = null;
+                try {
+                    filePath = execute(getFile).getFilePath();
+                    File file = downloadFile(filePath, new File("NoteBot/src/main/resources/img2.png"));
+                    BufferedImage originalImage = ImageIO.read(file);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write(originalImage, "png", baos);
+                    baos.flush();
+                    imageInByte = baos.toByteArray();
+                    baos.close();
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                Cell cell = service.getCellForContent(userId);
+                cell.setView(imageInByte);
+                service.putCell(cell);
+                return registrationMessageHandler
+                        .getrResultRegistrationAndLogIn(user, State.ONLINE, null, userId,
+                                "Вы успешно внесли заметку.",
+                                Arrays.asList
+                                        (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton()));
             }
         }
-
+        if (user.getState().equals(State.TIME.getNameState())) {
+            Cell cell = service.getCellForContent(userId);
+            this.sendUserPhoto(update,cell.getView());
+        }
         return null;
+    }
+
+
+    private void sendUserPhoto (Update update,byte[] img){
+        try {
+            execute(service.sendPhoto(update.getMessage().getFrom().getId(),img));
+        } catch (TelegramApiException e) {
+            throw new RuntimeException("Ошибка: невозможно отправить файл.");
+        }
     }
 }

@@ -1,6 +1,6 @@
 telegram:
   api-url: "https://api.telegram.org/"
-  webhook-path: "https://ea6d-188-227-8-85.ngrok.io"
+  webhook-path: "https://8621-188-227-8-85.ngrok.io"
   bot-name: "@KnoxaNoteBot"
   bot-token: ${TOKEN}
   host-url: "http://localhost:6000/"

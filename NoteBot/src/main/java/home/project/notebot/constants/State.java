@@ -16,7 +16,8 @@ public enum State {
     REGISTRATION_FINISHED("REGISTRATION_FINISHED"),
     ONLINE("ONLINE"),
     ADD_TITLE("ADD_TOPIC"),
-    ADD_CONTENT("ADD_CONTENT");
+    ADD_CONTENT("ADD_CONTENT"),
+    TIME("TIME");
 
 
     String nameState;
