@@ -7,17 +7,19 @@ import home.bot.notebotserver.entity.User;
 public interface Service {
 
 
-    public Cell getCell(int id);
+     Cell getCell(int id);
 
-    public User getUser(long id);
+     User getUser(long id);
 
-    public void addUser(User user);
+     void addUser(User user);
 
-    public void addCell(Cell cell);
+     void addCell(Cell cell);
 
-    public Cell getCellForContent(Long userId);
+     Cell getCellForContent(Long userId);
 
     User getUser(String text);
 
-    User getUserByPass(String text);
+    Cell[] getAllCellByUserId(int id);
+
+    void deleteCell(long cellId);
 }

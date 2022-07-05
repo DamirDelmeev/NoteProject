@@ -1,5 +1,6 @@
 package home.bot.notebotserver.dao;
 
+import home.bot.notebotserver.entity.Cell;
 import home.bot.notebotserver.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,19 +38,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User findById(long id) {
-        User user = entityManager.find(User.class, id);
-        return user;
+        return entityManager.find(User.class, id);
     }
 
     @Override
-    public User findAllByPassword(String text) {
-        Query query = entityManager.createQuery("from User where password=:paramName");
-        query.setParameter("paramName", text);
-        List<User> users = query.getResultList();
-        if (users.isEmpty()) {
-            return null;
-        } else {
-            return users.get(0);
-        }
+    public Cell[] getAllCellByUserId(int id) {
+        Query query = entityManager.createQuery("from Cell where user=:userId");
+        User user = new User();
+        user.setId(id);
+        query.setParameter("userId", user);
+        List<Cell> listCell = query.getResultList();
+        return listCell.size() == 0 ? new Cell[0] : listCell.toArray(new Cell[0]);
     }
 }

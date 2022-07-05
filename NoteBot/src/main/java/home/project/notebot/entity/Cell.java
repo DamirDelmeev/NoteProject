@@ -12,6 +12,5 @@ public class Cell {
     private String title;
     private String text;
     private byte[] view;
-    private String status;
     private User user;
 }

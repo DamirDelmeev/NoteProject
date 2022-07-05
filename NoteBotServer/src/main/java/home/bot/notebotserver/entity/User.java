@@ -21,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 public class User {
     @Id
-
     @Column(name = "id")
     private long id;
     @Column(name = "login")
@@ -32,8 +31,6 @@ public class User {
     private String state;
     @Column(name = "userinlogin")
     private String userInLogin;
-
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @NotFound(action = NotFoundAction.IGNORE)
     @OnDelete(action = OnDeleteAction.CASCADE)

@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -28,10 +30,6 @@ public class Service {
     private final RequestRunner requestRunner;
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
-
-    public Cell getCell(long id) {
-        return requestRunner.runnerGetSearchCell(id);
-    }
 
     public User getUser(long id) {
         return requestRunner.runnerGetSearchUser(id);
@@ -47,38 +45,26 @@ public class Service {
 
     public boolean checkLoginFromDB(String userText) {
         User userForCheck = requestRunner.runnerCheckLogin(userText);
-        if (userForCheck != null && userForCheck.getLogin().equals(userText)) {
-            return true;
-        } else return false;
+        return userForCheck != null && userForCheck.getLogin().equals(userText);
     }
 
     public boolean checkPasswordFromDB(String userText, User user) {
-        User userForCheck = requestRunner.runnercheckPassword(userText, user);
-        if (userForCheck != null && passwordEncoder.matches(userText, userForCheck.getPassword())
-                && userForCheck.getLogin().equals(user.getUserInLogin())) {
-            return true;
-        } else {
-            return false;
-        }
-
+        User userForCheck = requestRunner.runnercheckPassword(user.getLogin());
+        return userForCheck != null && passwordEncoder.matches(userText, userForCheck.getPassword())
+                && userForCheck.getLogin().equals(user.getUserInLogin());
     }
 
     public Cell getCellForContent(Long userId) {
         return requestRunner.runnerGetCellForContent(userId);
     }
 
-    public SendPhoto sendPhoto(Long longId,byte[] img) {
-        InputStream inputStream = null;
+    public SendPhoto sendPhoto(Long longId, byte[] img) {
+        InputStream inputStream;
         try {
             String pathIn = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "img.png").getPath();
-
             Path path = Paths.get(pathIn);
-
-
-            byte[] bytes = Files.readAllBytes(path);
-
+            Files.readAllBytes(path);
             inputStream = new ByteArrayInputStream(img);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -87,4 +73,14 @@ public class Service {
         sendPhoto.setChatId(String.valueOf(longId));
         return sendPhoto;
     }
+
+    public List<Cell> getListCell(Long userId) {
+        Cell[] listCell = requestRunner.getListCell(userId);
+        return Arrays.asList(listCell);
+    }
+
+    public void deleteCell(long id) {
+        requestRunner.deleteCell(id);
+    }
+
 }

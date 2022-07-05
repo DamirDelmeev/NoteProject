@@ -28,9 +28,6 @@ public class Cell {
     private String text;
     @Column(name = "view")
     private byte[] view;
-    @Column(name = "status")
-    private String status;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @NotFound(action = NotFoundAction.EXCEPTION)

@@ -17,14 +17,17 @@ public class MyRestController {
 
     @GetMapping("cell/{id}")
     public Cell getCell(@PathVariable int id) {
-        Cell cell = service.getCell(id);
-        return cell;
+        return service.getCell(id);
+    }
+
+    @GetMapping("cell/{id}/all")
+    public Cell[] getAllCellByUserId(@PathVariable int id) {
+        return service.getAllCellByUserId(id);
     }
 
     @GetMapping("user/{id}")
     public User getUser(@PathVariable long id) {
-        User user = service.getUser(id);
-        return user;
+        return service.getUser(id);
     }
 
     @PostMapping("cell")
@@ -41,12 +44,16 @@ public class MyRestController {
 
     @GetMapping("login/{text}")
     public User getUser(@PathVariable String text) {
-        User user = service.getUser(text);
-        return user;
+        return service.getUser(text);
     }
 
     @GetMapping("cell/content/{id}")
     public Cell getCellForContent(@PathVariable long id) {
         return service.getCellForContent(id);
+    }
+
+    @DeleteMapping("cell/{id}")
+    public void deleteCellById(@PathVariable long id) {
+        service.deleteCell(id);
     }
 }

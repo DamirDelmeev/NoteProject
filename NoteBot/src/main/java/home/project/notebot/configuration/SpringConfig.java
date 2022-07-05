@@ -24,8 +24,7 @@ public class SpringConfig {
 
     @Bean
     public NoteBot springWebhookBot(SetWebhook setWebhook) {
-        NoteBot bot = new NoteBot(setWebhook, telegramConfig);
-        return bot;
+        return new NoteBot(setWebhook, telegramConfig);
     }
 
     @Bean

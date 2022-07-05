@@ -20,42 +20,38 @@ public class RequestRunner {
     @Value("${telegram.host-url}")
     private String url;
 
-    public Cell runnerGetSearchCell(long longId) {
-        log.info("log message: {}", "Пользователь нажал поиск");
-        return restTemplate
-                .getForObject(url + "cell/{id}", Cell.class, longId);
-    }
-
     public User runnerGetSearchUser(long longId) {
-        log.info("log message: {}", "Пользователь нажал юзер поиск");
         return restTemplate
                 .getForObject(url + "user/{id}", User.class, longId);
     }
 
     public void runnerPutUser(User user) {
-        log.info("log message: {}", "Пользователь нажал add user");
         restTemplate.postForObject(url + "user", user, String.class);
     }
 
     public void runnerPutCell(Cell cell) {
-        log.info("log message: {}", "Пользователь нажал add cell");
         restTemplate.postForObject(url + "cell", cell, String.class);
     }
 
     public User runnerCheckLogin(String userText) {
-        User userForCheck = restTemplate.getForObject(url + "login/{text}", User.class, userText);
-        return userForCheck;
+        return restTemplate.getForObject(url + "login/{text}", User.class, userText);
 
     }
 
-    public User runnercheckPassword(String userText, User user) {
-        User userForCheck = restTemplate.getForObject(url + "login/{text}", User.class, userText);
-        return userForCheck;
+    public User runnercheckPassword(String userText) {
+        return restTemplate.getForObject(url + "login/{text}", User.class, userText);
     }
 
     public Cell runnerGetCellForContent(long userId) {
-        log.info("log message: {}", "Пользователь нажал add content");
         return restTemplate
                 .getForObject(url + "cell/content/{id}", Cell.class, userId);
+    }
+
+    public Cell[] getListCell(Long userId) {
+        return restTemplate.getForObject(url + "cell/{id}/all", Cell[].class, userId);
+    }
+
+    public void deleteCell(long cellId) {
+        restTemplate.delete(url + "cell/{id}", cellId);
     }
 }

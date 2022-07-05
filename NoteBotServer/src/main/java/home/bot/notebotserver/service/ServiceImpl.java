@@ -54,7 +54,13 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public User getUserByPass(String text) {
-        return userRepository.findAllByPassword(text);
+    public Cell[] getAllCellByUserId(int id) {
+        return userRepository.getAllCellByUserId(id);
+    }
+
+    @Override
+    public void deleteCell(long cellId) {
+        Cell cell = getCell((int) cellId);
+        cellRepository.delete(cell);
     }
 }

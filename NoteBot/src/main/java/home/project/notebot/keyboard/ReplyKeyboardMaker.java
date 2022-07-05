@@ -19,13 +19,11 @@ public class ReplyKeyboardMaker {
         namesButton.forEach(constantsName -> row.add(new KeyboardButton(constantsName)));
         List<KeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(row);
-
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setKeyboard(keyboard);
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(true);
-
         return replyKeyboardMarkup;
     }
 }

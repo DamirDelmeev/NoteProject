@@ -16,11 +16,14 @@ public enum State {
     REGISTRATION_FINISHED("REGISTRATION_FINISHED"),
     ONLINE("ONLINE"),
     ADD_TITLE("ADD_TOPIC"),
-    ADD_CONTENT("ADD_CONTENT"),
-    TIME("TIME");
+    ADD_CONTENT_TEXT("ADD_CONTENT"),
+    ADD_CONTENT_PHOTO("ADD_CONTENT_PHOTO"),
+    TIME("TIME"),
+    TRY_TO_FIND("TRY_TO_FIND"),
+    TRY_TO_DELETE("TRY_TO_DELETE");
 
 
-    String nameState;
+   final String nameState;
 
     State(String nameState) {
         this.nameState = nameState;

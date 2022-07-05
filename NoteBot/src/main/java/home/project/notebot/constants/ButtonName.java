@@ -6,10 +6,12 @@ import lombok.Getter;
 public enum ButtonName {
     LOG_IN("Войти"),
     REGISTRATION("Регистрация"),
+    CONTINUE("Продолжить"),
     ADD_NOTE("Добавить запись"),
-    FIND_NOTE("Найти запись");
+    FIND_NOTE("Найти запись"),
+    DELETE_NOTE("Удалить запись");
 
-    String nameButton;
+     final String nameButton;
 
     ButtonName(String nameButton) {
         this.nameButton = nameButton;
