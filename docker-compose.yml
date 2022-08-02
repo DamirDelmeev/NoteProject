@@ -1,0 +1,38 @@
+version: '3.0'
+
+services:
+  db:
+    image: postgres
+    container_name: database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Knoxa
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - /data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+
+  #  webserver:
+  #    image: webserver
+  #    container_name: webserver
+  #    environment:
+  #      DATA_PASS: Knoxa
+  #      SERVER_PORT: 6000
+  #      HOST_IP: 192.168.0.103
+  #    ports:
+  #      - "6000:6000"
+  #    links:
+  #      - db
+
+  client:
+    image: client
+    container_name: client
+    environment:
+      TOKEN: 5573826288:AAEHA0I_gipIUFdCUnIelsczIeHoDCO3p_M
+      PORT: 5000
+      HOST_IP: 192.168.0.103
+    ports:
+      - 5000:5000

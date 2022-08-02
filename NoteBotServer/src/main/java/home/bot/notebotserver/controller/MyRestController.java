@@ -2,7 +2,7 @@ package home.bot.notebotserver.controller;
 
 
 import home.bot.notebotserver.entity.Cell;
-import home.bot.notebotserver.entity.User;
+import home.bot.notebotserver.entity.Users;
 import home.bot.notebotserver.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,17 +16,17 @@ public class MyRestController {
 
 
     @GetMapping("cell/{id}")
-    public Cell getCell(@PathVariable int id) {
+    public Cell getCell(@PathVariable Integer id) {
         return service.getCell(id);
     }
 
     @GetMapping("cell/{id}/all")
-    public Cell[] getAllCellByUserId(@PathVariable int id) {
+    public Cell[] getAllCellByUserId(@PathVariable Long id) {
         return service.getAllCellByUserId(id);
     }
 
     @GetMapping("user/{id}")
-    public User getUser(@PathVariable long id) {
+    public Users getUser(@PathVariable long id) {
         return service.getUser(id);
     }
 
@@ -38,12 +38,12 @@ public class MyRestController {
 
     @PostMapping("user")
     @ResponseStatus(HttpStatus.OK)
-    public void addUser(@RequestBody User user) {
-        service.addUser(user);
+    public void addUser(@RequestBody Users users) {
+        service.addUser(users);
     }
 
     @GetMapping("login/{text}")
-    public User getUser(@PathVariable String text) {
+    public Users getUser(@PathVariable String text) {
         return service.getUser(text);
     }
 
@@ -53,7 +53,7 @@ public class MyRestController {
     }
 
     @DeleteMapping("cell/{id}")
-    public void deleteCellById(@PathVariable long id) {
+    public void deleteCellById(@PathVariable Integer id) {
         service.deleteCell(id);
     }
 }

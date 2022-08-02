@@ -2,24 +2,24 @@ package home.bot.notebotserver.service;
 
 
 import home.bot.notebotserver.entity.Cell;
-import home.bot.notebotserver.entity.User;
+import home.bot.notebotserver.entity.Users;
 
 public interface Service {
 
 
-     Cell getCell(int id);
+    Cell getCell(Integer id);
 
-     User getUser(long id);
+    Users getUser(Long id);
 
-     void addUser(User user);
+    void addUser(Users users);
 
-     void addCell(Cell cell);
+    void addCell(Cell cell);
 
-     Cell getCellForContent(Long userId);
+    Cell getCellForContent(Long userId);
 
-    User getUser(String text);
+    Users getUser(String text);
 
-    Cell[] getAllCellByUserId(int id);
+    Cell[] getAllCellByUserId(Long id);
 
-    void deleteCell(long cellId);
+    void deleteCell(Integer cellId);
 }

@@ -1,7 +1,7 @@
 package home.project.notebot.services;
 
 import home.project.notebot.entity.Cell;
-import home.project.notebot.entity.User;
+import home.project.notebot.entity.Users;
 import home.project.notebot.services.template.RequestRunner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +31,12 @@ public class Service {
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
 
-    public User getUser(long id) {
+    public Users getUser(long id) {
         return requestRunner.runnerGetSearchUser(id);
     }
 
-    public void putUser(User user) {
-        requestRunner.runnerPutUser(user);
+    public void putUser(Users users) {
+        requestRunner.runnerPutUser(users);
     }
 
     public void putCell(Cell cell) {
@@ -44,14 +44,14 @@ public class Service {
     }
 
     public boolean checkLoginFromDB(String userText) {
-        User userForCheck = requestRunner.runnerCheckLogin(userText);
-        return userForCheck != null && userForCheck.getLogin().equals(userText);
+        Users usersForCheck = requestRunner.runnerCheckLogin(userText);
+        return usersForCheck != null && usersForCheck.getLogin().equals(userText);
     }
 
-    public boolean checkPasswordFromDB(String userText, User user) {
-        User userForCheck = requestRunner.runnercheckPassword(user.getLogin());
-        return userForCheck != null && passwordEncoder.matches(userText, userForCheck.getPassword())
-                && userForCheck.getLogin().equals(user.getUserInLogin());
+    public boolean checkPasswordFromDB(String userText, Users users) {
+        Users usersForCheck = requestRunner.runnercheckPassword(users.getLogin());
+        return usersForCheck != null && passwordEncoder.matches(userText, usersForCheck.getPassword())
+                && usersForCheck.getLogin().equals(users.getUserInLogin());
     }
 
     public Cell getCellForContent(Long userId) {
@@ -79,7 +79,7 @@ public class Service {
         return Arrays.asList(listCell);
     }
 
-    public void deleteCell(long id) {
+    public void deleteCell(Integer id) {
         requestRunner.deleteCell(id);
     }
 

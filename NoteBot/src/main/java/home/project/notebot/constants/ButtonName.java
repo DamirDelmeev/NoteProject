@@ -11,7 +11,7 @@ public enum ButtonName {
     FIND_NOTE("Найти запись"),
     DELETE_NOTE("Удалить запись");
 
-     final String nameButton;
+    final String nameButton;
 
     ButtonName(String nameButton) {
         this.nameButton = nameButton;

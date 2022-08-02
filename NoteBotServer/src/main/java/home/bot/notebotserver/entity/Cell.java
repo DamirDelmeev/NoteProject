@@ -14,14 +14,14 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "cell")
+//@Table(name = "cell")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cell {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "title")
     private String title;
     @Column(name = "text")
@@ -32,5 +32,5 @@ public class Cell {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @NotFound(action = NotFoundAction.EXCEPTION)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users users;
 }

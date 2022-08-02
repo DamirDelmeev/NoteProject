@@ -8,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cell {
-    private long id;
+    private Integer id;
     private String title;
     private String text;
     private byte[] view;
-    private User user;
+    private Users users;
 }

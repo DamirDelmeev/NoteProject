@@ -4,7 +4,7 @@ import home.project.notebot.bot.NoteBot;
 import home.project.notebot.constants.ButtonName;
 import home.project.notebot.constants.State;
 import home.project.notebot.entity.Cell;
-import home.project.notebot.entity.User;
+import home.project.notebot.entity.Users;
 import home.project.notebot.keyboard.ReplyKeyboardMaker;
 import home.project.notebot.services.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +33,11 @@ public class NotesMessageHandler {
     Service service;
 
 
-    public SendMessage getrResultRegistrationAndLogIn(User user, State online, SendMessage sendMessage, Long userId,
+    public SendMessage getrResultRegistrationAndLogIn(Users users, State online, SendMessage sendMessage, Long userId,
                                                       String text,
                                                       List<String> ADD_NOTE) {
-        user.setState(online.getNameState());
-        service.putUser(user);
+        users.setState(online.getNameState());
+        service.putUser(users);
         return this.getInfoMessage(userId, text,
                 ADD_NOTE);
     }
@@ -49,14 +49,14 @@ public class NotesMessageHandler {
         return sendMessage;
     }
 
-    public SendMessage showInfoAfterChooseAddButtton(Long userId, User user, String userText) {
+    public SendMessage showInfoAfterChooseAddButtton(Long userId, Users users, String userText) {
         if (userText.equals(ButtonName.ADD_NOTE.getNameButton())) {
-            user.setState(State.ADD_TITLE.getNameState());
-            service.putUser(user);
+            users.setState(State.ADD_TITLE.getNameState());
+            service.putUser(users);
             return new SendMessage(userId.toString(), "Введите тему вашей заметки.");
         } else {
             return this
-                    .getrResultRegistrationAndLogIn(user, State.ONLINE, null, userId,
+                    .getrResultRegistrationAndLogIn(users, State.ONLINE, null, userId,
                             "Используйте кнопки ниже.",
                             Arrays.asList
                                     (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton(),
@@ -64,8 +64,8 @@ public class NotesMessageHandler {
         }
     }
 
-    public SendMessage deleteNoteAfterChoose(Long userId, User user, String userText) {
-        Integer userChoose = null;
+    public SendMessage deleteNoteAfterChoose(Long userId, Users users, String userText) {
+        Integer userChoose ;
         try {
             userChoose = Integer.valueOf(userText);
             List<Cell> cells = service.getListCell(userId);
@@ -75,8 +75,8 @@ public class NotesMessageHandler {
             sendMessage.setReplyMarkup(replyKeyboardMaker.getKeyboard(Arrays.asList
                     (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton(),
                             ButtonName.DELETE_NOTE.getNameButton())));
-            user.setState(State.ONLINE.getNameState());
-            service.putUser(user);
+            users.setState(State.ONLINE.getNameState());
+            service.putUser(users);
             return sendMessage;
         } catch (RuntimeException r) {
             return new SendMessage
@@ -84,13 +84,13 @@ public class NotesMessageHandler {
         }
     }
 
-    public SendMessage findNodeAndAddState(User user, State tryToFind, Long userId, String x) {
-        user.setState(tryToFind.getNameState());
-        service.putUser(user);
+    public SendMessage findNodeAndAddState(Users users, State tryToFind, Long userId, String x) {
+        users.setState(tryToFind.getNameState());
+        service.putUser(users);
         List<Cell> cells = service.getListCell(userId);
         if (cells.size() == 0) {
-            user.setState(State.ONLINE.getNameState());
-            service.putUser(user);
+            users.setState(State.ONLINE.getNameState());
+            service.putUser(users);
             SendMessage sendMessage = new SendMessage
                     (userId.toString(), "Cписок пуст.");
             sendMessage.setReplyMarkup(replyKeyboardMaker.getKeyboard(Arrays.asList
@@ -103,64 +103,63 @@ public class NotesMessageHandler {
                         .map(cell -> cells.indexOf(cell) + " : " + cell.getTitle())
                         .collect(Collectors.joining("\n"));
         return new SendMessage
-                (userId.toString(), "Список:\n"+cellsToString + x);
+                (userId.toString(), "Список:\n" + cellsToString + x);
     }
 
-    public SendMessage showInfoForAddingPhoto(Long userId, User user, String userText) {
+    public SendMessage showInfoForAddingPhoto(Long userId, Users users, String userText) {
         Cell cell = service.getCellForContent(userId);
         cell.setText(userText);
         service.putCell(cell);
         return this
-                .getrResultRegistrationAndLogIn(user, State.ADD_CONTENT_PHOTO, null, userId,
-                        "Если хотите добавить картинку приложите картинку к сообщению или нажмите прололжить.",
+                .getrResultRegistrationAndLogIn(users, State.ADD_CONTENT_PHOTO, null, userId,
+                        "Если хотите добавить картинку приложите картинку к сообщению или нажмите продолжить.",
                         Collections.singletonList(ButtonName.CONTINUE.getNameButton()));
     }
 
-    public SendMessage showInfoAfterTitle(Long userId, User user, String userText) {
-        new User();
+    public SendMessage showInfoAfterTitle(Long userId, Users users, String userText) {
         Cell cell = Cell.builder()
                 .title(userText)
-                .user(User.builder()
+                .users(Users.builder()
                         .id(userId)
                         .build())
                 .build();
         service.putCell(cell);
-        user.setState(State.ADD_CONTENT_TEXT.getNameState());
-        service.putUser(user);
+        users.setState(State.ADD_CONTENT.getNameState());
+        service.putUser(users);
         return new SendMessage(userId.toString(), "Введите текст для вашей заметки.");
     }
 
-    public SendMessage addPhotoFromTelegrammWithoutText(NoteBot noteBot, Update update, Long userId, User user) {
-       addPhotoFromTelegramm(noteBot,update, userId);
+    public SendMessage addPhotoFromTelegrammWithoutText(NoteBot noteBot, Update update, Long userId, Users users) {
+        addPhotoFromTelegramm(noteBot, update, userId);
         Cell cell = service.getCellForContent(userId);
         if (update.getMessage() != null) {
             cell.setText(update.getMessage().getCaption());
             service.putCell(cell);
         }
         return this
-                .getrResultRegistrationAndLogIn(user, State.ONLINE, null, userId,
+                .getrResultRegistrationAndLogIn(users, State.ONLINE, null, userId,
                         "Вы успешно внесли заметку.",
                         Arrays.asList
                                 (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton(),
                                         ButtonName.DELETE_NOTE.getNameButton()));
     }
 
-    public SendMessage showNoteWithPhotoAfterChoose(NoteBot noteBot, Update update, Long userId, User user, String userText) {
+    public SendMessage showNoteWithPhotoAfterChoose(NoteBot noteBot, Update update, Long userId, Users users, String userText) {
         Integer userChoose;
         try {
             userChoose = Integer.valueOf(userText);
             List<Cell> cells = service.getListCell(userId);
             Cell cell = cells.get(userChoose);
             if (cell.getView() != null) {
-                sendPhotoToTelegramm(noteBot,update, cell.getView());
+                sendPhotoToTelegramm(noteBot, update, cell.getView());
             }
             SendMessage sendMessage = new SendMessage
                     (userId.toString(), cell.getTitle() + "\n\nТекст:\n" + cell.getText());
             sendMessage.setReplyMarkup(replyKeyboardMaker.getKeyboard(Arrays.asList
                     (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton(),
                             ButtonName.DELETE_NOTE.getNameButton())));
-            user.setState(State.ONLINE.getNameState());
-            service.putUser(user);
+            users.setState(State.ONLINE.getNameState());
+            service.putUser(users);
             return sendMessage;
         } catch (RuntimeException r) {
             return new SendMessage
@@ -168,18 +167,19 @@ public class NotesMessageHandler {
         }
     }
 
-    public SendMessage finishAddContentAndOpenMenu(NoteBot noteBot, Update update, Long userId, User user) {
+    public SendMessage finishAddContentAndOpenMenu(NoteBot noteBot, Update update, Long userId, Users users) {
         if (update.getMessage().getPhoto() != null) {
-            addPhotoFromTelegramm(noteBot,update, userId);
+            addPhotoFromTelegramm(noteBot, update, userId);
         }
         return this
-                .getrResultRegistrationAndLogIn(user, State.ONLINE, null, userId,
+                .getrResultRegistrationAndLogIn(users, State.ONLINE, null, userId,
                         "Вы успешно внесли заметку.",
                         Arrays.asList
                                 (ButtonName.ADD_NOTE.getNameButton(), ButtonName.FIND_NOTE.getNameButton(),
                                         ButtonName.DELETE_NOTE.getNameButton()));
     }
-    private void sendPhotoToTelegramm(NoteBot noteBot,Update update, byte[] img) {
+
+    private void sendPhotoToTelegramm(NoteBot noteBot, Update update, byte[] img) {
         try {
             noteBot.execute(service.sendPhoto(update.getMessage().getFrom().getId(), img));
         } catch (TelegramApiException e) {
@@ -187,7 +187,7 @@ public class NotesMessageHandler {
         }
     }
 
-    private void addPhotoFromTelegramm(NoteBot noteBot,Update update, Long userId) {
+    private void addPhotoFromTelegramm(NoteBot noteBot, Update update, Long userId) {
         byte[] imageInByte;
         List<PhotoSize> photos = update.getMessage().getPhoto();
         PhotoSize photo = photos.get(photos.size() - 1);

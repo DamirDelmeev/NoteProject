@@ -1,17 +1,17 @@
 package home.bot.notebotserver.dao;
 
 import home.bot.notebotserver.entity.Cell;
-import home.bot.notebotserver.entity.User;
+import home.bot.notebotserver.entity.Users;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository {
 
-    User findAllByLogin(String text);
+    Users findAllByLogin(String text);
 
-    void save(User user);
+    void save(Users users);
 
-    User findById(long id);
+    Users findById(Long id);
 
-    Cell[] getAllCellByUserId(int id);
+    Cell[] getAllCellByUserId(Long id);
 }
